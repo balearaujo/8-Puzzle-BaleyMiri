@@ -2,6 +2,7 @@
 using namespace std;
 #include "algoritmo.hpp"
 #include "juego.hpp"
+#include "Puntajes.hpp"
 
 int main(){
     cout << "Bienvenido al juego del 8!\n";
@@ -13,23 +14,24 @@ int main(){
     int opcion;
     cin >> opcion;
 
-    while(opcion != 3){
+    while(opcion != 4){
         if(opcion == 1){
             jugarManualmente();
-        } else if(opcion == 2){
+        } else if(opcion==2){
             simulacion();
-        } else if(opcion == 3){
-            //implementar reporte de jugadores
-        } else if (opcion == 4){
+        } else if(opcion==3){
+            mostrarReporte();
+        } else if (opcion==4){
             break;
         } else {
             cout << "Opcion invalida, intente de nuevo.\n";
         }
 
-        cout << "Elija una opcion:\n";
+        cout << "\nElija una opcion:\n";
         cout << "1. Jugar manualmente\n";
         cout << "2. Ver solucion de un tablero\n";
-        cout << "3. Salir\n";
+        cout << "3. MostrarReporte\n";
+        cout << "4. Salir\n";
         cin >> opcion;
     }
 

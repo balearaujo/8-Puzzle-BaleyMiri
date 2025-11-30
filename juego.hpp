@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include "Puntajes.hpp"
 using namespace std;
 
 class MatrizJugable{
@@ -13,7 +13,7 @@ class MatrizJugable{
     int matNivel1[3][3]={
         {1,2,3},
         {4,5,6},
-        {7,8,0}};
+        {8,7,0}};
 
     int matNivel2[3][3]={
         {1,2,3},
@@ -21,11 +21,7 @@ class MatrizJugable{
         {7,6,5}
     };
 
-    int matMeta[3][3]={
-        {0,0,0},
-        {0,0,0},
-        {0,0,0}
-    };
+    int matMeta[3][3];
 
     MatrizJugable(){
         for(int i=0;i<3;i++){
@@ -164,41 +160,27 @@ class MatrizJugable{
     }
 
     void seleccionarNivel(int nivel){
-        if (nivel==1){
-            for (int i=0;i<3;i++){
-                for (int j=0;j<3;j++){
-                    matriz[i][j]=matNivel1[i][j];
-                    if (matriz[i][j]==0){
-                        posCeroX=i;
-                        posCeroY=j;
-                    }
-                }
-            }
-            imprimirPatron(matNivel1);
-        } else if (nivel==2){
-            for (int i=0;i<3;i++){
-                for (int j=0;j<3;j++){
-                    matriz[i][j]=matNivel2[i][j];
-                    if (matriz[i][j]==0){
-                        posCeroX=i;
-                        posCeroY=j;
-                    }
-                }
-            }
-            imprimirPatron(matNivel2);
-        } else {
-            cout<<"Ese no existe, juega el nivel uno\n";
-            for (int i=0;i<3;i++){
-                for (int j=0;j<3;j++){
-                    matriz[i][j]=matNivel1[i][j];
-                    if (matriz[i][j]==0){
-                        posCeroX=i;
-                        posCeroY=j;
-                    }
-                }
-            }
-        }
+        int (*patron)[3];
 
+    if (nivel == 1){
+        patron = matNivel1;
+    }
+    else if (nivel == 2){
+        patron = matNivel2;
+    }
+    else {
+        cout<<"Ese no existe, se usa nivel 1\n";
+        patron = matNivel1;
+    }
+
+    // Copiar patrón a la meta
+    for (int i=0;i<3;i++){
+        for (int j=0;j<3;j++){
+            matMeta[i][j] = patron[i][j];
+        }
+    }
+
+    imprimirPatron(patron);
     }
 
 
@@ -206,7 +188,6 @@ class MatrizJugable{
 
 void jugarManualmente(){
     MatrizJugable juego;
-
     cout<<"Seleccionar Nivel de Dificultad:\n";
     cout<<"1. Nivel 1 (Facil)\n";
     cout<<"2. Nivel 2 (Dificil)\n";
@@ -214,37 +195,50 @@ void jugarManualmente(){
     cin>>nivel;
 
     juego.seleccionarNivel(nivel);  
+    cout<<"Ingresa tu alias: ";
+    string alias, fecha;
+    cin>>alias;
 
+    int puntos=0;
     juego.matrizRandom();           
-    juego.imprimirMatriz();        
+    juego.imprimirMatriz();     
+    fecha=obtenerFecha();   
 
     while (true) {
         juego.MoverFicha();
+        puntos++;
         juego.imprimirMatriz();
         
         if (juego.esMeta()){
             cout<<"Ganaste! eres pro\n";
+            guardarPuntuacion(alias, puntos, fecha);
             break;
         }
     }
+
 
     cout<<"Otra matriz? (1/0): ";
     int ans;
     cin>>ans;
     while(ans!=0){
+        cout<<"Ingresa tu alias: ";
+        cin>>alias;
+        puntos=0;
+        fecha=obtenerFecha();
         juego.matrizRandom();
         juego.imprimirMatriz();
 
         while (true) {
             juego.MoverFicha();
+            puntos++;
             juego.imprimirMatriz();
 
             if (juego.esMeta()) {
                 cout << "¡Ganaste otra vez!\n";
+                guardarPuntuacion(alias, puntos, fecha);
                 break;
             }
         }
-
         cout<<"Otra matriz? (1/0): ";
         cin>>ans;
     }
