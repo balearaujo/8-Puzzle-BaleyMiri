@@ -16,7 +16,6 @@ private:
 
 public:
 
-    // Patrones meta
     int matNivel1[3][3] = {
         {1,2,3},
         {4,5,6},
@@ -38,9 +37,6 @@ public:
         posCeroX = posCeroY = -1;
     }
 
-    // -------------------------------
-    // Impresión (idéntica a la tuya)
-    // -------------------------------
     void imprimirMatriz() {
         int ancho = 10;
         int altura = 5;
@@ -87,9 +83,7 @@ public:
         cout << "+\n";
     }
 
-    // -------------------------------
-    // Movimiento y sugerencias
-    // -------------------------------
+    
     void MoverFicha(int nivel) {
 
         cout << "Que ficha mover (0= Sugerencia, -1= Rendirse): ";
@@ -153,9 +147,6 @@ public:
         }
     }
 
-    // -------------------------------
-    // Meta check e impresión patrón
-    // -------------------------------
     bool esMeta() {
         for (int i=0;i<3;i++)
             for (int j=0;j<3;j++)
@@ -193,9 +184,6 @@ public:
         imprimirPatron(patron);
     }
 
-    // -------------------------
-    // Funciones para generar nivel REAL desde la meta (garantiza solvencia)
-    // -------------------------
     void buscarCero() {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
@@ -230,7 +218,7 @@ public:
     }
 
     void generarNivel(int nivel) {
-        // Copiar la meta al tablero inicial
+       
         for(int i=0;i<3;i++)
             for(int j=0;j<3;j++)
                 matriz[i][j] = matMeta[i][j];
@@ -246,11 +234,9 @@ public:
             *this = movs[r];
         }
 
-        // actualizar posCero por si acaso
         buscarCero();
     }
 
-    // función auxiliar pública para pruebas (opcional)
     void imprimirMatrizSimple() {
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++) cout << matriz[i][j] << ' ';
@@ -260,11 +246,6 @@ public:
 
 };
 
-
-
-// ==============================================
-//    JUGAR MANUALMENTE
-// ==============================================
 
 void jugarManualmente(){
     MatrizJugable juego;
@@ -300,7 +281,7 @@ void jugarManualmente(){
         }
         catch(int e){
             if(e == -1){
-                cout << "\nTe rendiste. Regresando al menu...\n";
+                cout << "\nBUUUU, el perdedor se rindio. Regresando al menu...\n";
                 return;
             }
         }
@@ -309,13 +290,12 @@ void jugarManualmente(){
         juego.imprimirMatriz();
 
         if(juego.esMeta()){
-            cout << "Ganaste!\n";
+            cout << "Ganaste, eres super proo!\n";
             guardarPuntuacion(alias, puntos, fecha);
             break;
         }
     }
 
-    // MULTIJUEGO
     cout << "¿Jugar otra vez? (1 = si / 0 = no): ";
     int ans;
     cin >> ans;
@@ -334,7 +314,7 @@ void jugarManualmente(){
             }
             catch(int e){
                 if(e == -1){
-                    cout << "\nTe rendiste. Regresando al menu...\n";
+                    cout << "\nBUUUU, el perdedor se rindio. Regresando al menu...\n";
                     return;
                 }
             }
@@ -343,7 +323,7 @@ void jugarManualmente(){
             juego.imprimirMatriz();
 
             if(juego.esMeta()){
-                cout << "Ganaste!\n";
+                cout << "Ganaste, eres super proo!\n";
                 guardarPuntuacion(alias, puntos, fecha);
                 break;
             }

@@ -14,10 +14,6 @@ using namespace std;
 
 const int C = 362880;
 
-// -------------------------
-// Función: esSoluble
-// Devuelve true si la permutación es resoluble (inversiones pares)
-// -------------------------
 bool esSoluble(int m[3][3]) {
     int arr[9], k = 0;
     for(int i=0;i<3;i++)
@@ -221,7 +217,6 @@ struct Nodo {
     int g, h, f;
     Nodo* padre = nullptr; 
 
-    // operador invertido para mantener compatibilidad mínima si se usa heap por valor
     bool operator<(const Nodo &o) const {
         return f > o.f;
     }
@@ -238,7 +233,6 @@ vector<tablero> solucion(tablero inicial, tablero final = tablero()){
 
     vector<tablero>sol;
 
-    // priority_queue de punteros con comparator lambda (min-heap por f)
     priority_queue<Nodo*, vector<Nodo*>, function<bool(Nodo*,Nodo*)>> posiciones(
         [](Nodo* a, Nodo* b){ return a->f > b->f; }
     );
@@ -249,7 +243,6 @@ vector<tablero> solucion(tablero inicial, tablero final = tablero()){
     inicio.h = inicial.dist_manhattan(final);
     inicio.f = inicio.h + inicio.g;
 
-    // insertamos el nodo inicial como puntero en el heap
     Nodo* inicio_ptr = new Nodo(inicio);
     vis[inicial.get_id()]=1;
 

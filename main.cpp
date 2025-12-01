@@ -27,7 +27,7 @@ int main(){
 
         cout << "\nElija una opcion:\n";
         cout << "1. Jugar manualmente\n";
-        cout << "2. Ver solucion de un tablero\n";
+        cout << "2. Modo inteligente super pro\n";
         cout << "3. Mostrar reporte\n";
         cout << "4. Salir\n";
 
