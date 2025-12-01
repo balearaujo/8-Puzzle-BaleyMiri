@@ -1,3 +1,6 @@
+#ifndef ALGORITMO_HPP
+#define ALGORITMO_HPP
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -10,6 +13,27 @@
 using namespace std;
 
 const int C = 362880;
+
+// -------------------------
+// Función: esSoluble
+// Devuelve true si la permutación es resoluble (inversiones pares)
+// -------------------------
+bool esSoluble(int m[3][3]) {
+    int arr[9], k = 0;
+    for(int i=0;i<3;i++)
+        for(int j=0;j<3;j++)
+            arr[k++] = m[i][j];
+
+    int inv = 0;
+    for(int i=0;i<9;i++){
+        for(int j=i+1;j<9;j++){
+            if(arr[i] && arr[j] && arr[i] > arr[j])
+                inv++;
+        }
+    }
+
+    return (inv % 2 == 0);
+}
 
 class tablero{
     private:
@@ -25,6 +49,7 @@ class tablero{
                 for(int j=0;j<3;j++)matriz[i][j]=3*i+j;
             }
             calcular_id();
+            movimientos = 0;
         }
 
         tablero(int _matriz[3][3], int mov=0){
@@ -56,6 +81,8 @@ class tablero{
         void print() {
             int ancho=10;   
             int altura=5;   
+
+            cout<<"\n";
 
             for (int i=0; i<3; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -100,16 +127,20 @@ class tablero{
 
                     cout<<"|\n";
                 }
-            }
 
-    for (int j=0; j<3; j++) {
-        cout<<"+";
-        for (int k=0; k<ancho; k++){
-            cout << "-";
+            }
+        
+            for (int j=0; j<3; j++) {
+                cout<<"+";
+                for (int k=0; k<ancho; k++){
+                    cout << "-";
+                }
+            }
+            cout << "+\n";
+
+            cout<<"\n";
+
         }
-    }
-    cout << "+\n";
-    }
 
         vector<tablero>calcular_movimientos(){
             vector<tablero>mov;
@@ -167,6 +198,15 @@ class tablero{
                 }
                 id += c * factorial[8 - i];
             }
+        }
+
+        int get_movimiento( tablero meta){
+            for(int i=0;i<3;i++){
+                for(int j=0;j<3;j++){
+                    if(matriz[i][j]==0)return meta.matriz[i][j];
+                }
+            }
+            return -1;
         }
 
         int get_id(){return id;};
@@ -257,6 +297,8 @@ vector<tablero> solucion(tablero inicial, tablero final = tablero()){
 
 }
 
+
+
 void simulacion(){
 
     int averSiJala[3][3];
@@ -267,9 +309,21 @@ void simulacion(){
 
     for(int i=0;i<3;i++)for(int j=0;j<3;j++)cin>>averSiJala[i][j];
 
+    // validar solvencia inicial
+    if(!esSoluble(averSiJala)){
+        cout << "El tablero inicial NO es resoluble.\n";
+        return;
+    }
+
     cout << "Ingresar el estado final (que sea valido) y 0 para el espacio \n";
 
     for(int i=0;i<3;i++)for(int j=0;j<3;j++)cin>>averSiJala2[i][j];
+
+    // validar solvencia final
+    if(!esSoluble(averSiJala2)){
+        cout << "El tablero final NO es resoluble.\n";
+        return;
+    }
 
     tablero inicio(averSiJala);
     tablero final(averSiJala2);
@@ -280,5 +334,9 @@ void simulacion(){
 
     if(respuesta.size()==0){
         cout << (inicio.get_id() == final.get_id() ? "Son iguales": "No hay solucion");
+    } else {
+        cout << "Solucion encontrada en " << respuesta.size() - 1 << " movimientos.\n";
     }
 }
+
+#endif

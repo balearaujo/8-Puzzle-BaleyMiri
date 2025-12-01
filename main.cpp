@@ -1,6 +1,5 @@
 #include <iostream>
 using namespace std;
-#include "algoritmo.hpp"
 #include "juego.hpp"
 #include "Puntajes.hpp"
 
@@ -11,18 +10,17 @@ int main(){
     cout << "2. Ver solucion de un tablero\n";
     cout << "3. Mostrar reporte de jugadores\n";
     cout << "4. Salir\n";
+
     int opcion;
     cin >> opcion;
 
     while(opcion != 4){
         if(opcion == 1){
             jugarManualmente();
-        } else if(opcion==2){
+        } else if(opcion == 2){
             simulacion();
-        } else if(opcion==3){
+        } else if(opcion == 3){
             mostrarReporte();
-        } else if (opcion==4){
-            break;
         } else {
             cout << "Opcion invalida, intente de nuevo.\n";
         }
@@ -30,8 +28,9 @@ int main(){
         cout << "\nElija una opcion:\n";
         cout << "1. Jugar manualmente\n";
         cout << "2. Ver solucion de un tablero\n";
-        cout << "3. MostrarReporte\n";
+        cout << "3. Mostrar reporte\n";
         cout << "4. Salir\n";
+
         cin >> opcion;
     }
 
