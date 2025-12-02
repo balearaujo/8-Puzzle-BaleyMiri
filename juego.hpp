@@ -3,23 +3,25 @@
 
 #include <iostream>
 #include <string>
-#include "Puntajes.hpp"
-#include "algoritmo.hpp"
+#include "Puntajes.hpp" // Incluye el archivo de puntajes
+#include "algoritmo.hpp" // Incluye el archivo del algoritmo A*
 
 using namespace std;
 
 class MatrizJugable {
 private:
-    int matriz[3][3];
-    int posCeroX = -1;
+    int matriz[3][3]; // Matriz del juego
+
+    //posicion del espacio vacio
+    int posCeroX = -1; 
     int posCeroY = -1;
 
 public:
-
+    //Patrones de los 2 distintos niveles
     int matNivel1[3][3] = {
         {1,2,3},
         {4,5,6},
-        {8,7,0}
+        {7,8,0}
     };
 
     int matNivel2[3][3] = {
@@ -27,9 +29,10 @@ public:
         {8,0,4},
         {7,6,5}
     };
-
+    //Matriz donde se guarda la meta segun el nivel
     int matMeta[3][3];
 
+    // Constructor
     MatrizJugable() {
         for(int i=0;i<3;i++)
             for(int j=0;j<3;j++)
@@ -37,10 +40,13 @@ public:
         posCeroX = posCeroY = -1;
     }
 
+    // Imprimie la matriz de manera bonita
     void imprimirMatriz() {
-        int ancho = 10;
+        //Calculo de medidas
+        int ancho = 10; 
         int altura = 5;
 
+        //Imprime bordes de la matriz
         for (int i=0; i<3; i++) {
             for (int j = 0; j < 3; j++) {
                 cout << "+";
@@ -48,20 +54,22 @@ public:
             }
             cout << "+\n";
 
+            //Imprime filas de la matriz
             for (int h = 0; h < altura; h++) {
                 for (int j=0; j<3; j++) {
                     cout << "|";
-                    cout << "\033[105m";
+                    cout << "\033[105m"; //inicio rosa
 
+                    //Centrar numero en la celda
                     if (h == altura/2) {
-                        int num = matriz[i][j];
+                        int num = matriz[i][j]; // Numero a imprimir
 
                         int espacioDer = (ancho-1)/2;
-                        int espacioIzq = ancho-1-espacioDer;
+                        int espacioIzq = ancho-1-espacioDer; // Espacios para centrar
 
                         for (int p=0;p<espacioIzq;p++) cout<<" ";
 
-                        if (num == 0) cout << " ";
+                        if (num == 0) cout << " "; //Dejar espacio en blanco para el 0
                         else cout << num;
 
                         for (int p=0;p<espacioDer;p++) cout<<" ";
@@ -70,12 +78,13 @@ public:
                         for (int p=0;p<ancho;p++) cout<<" ";
                     }
 
-                    cout << "\033[0m";
+                    cout << "\033[0m"; //fin del color
                 }
                 cout << "|\n";
             }
         }
 
+        //Imprime ultima linea
         for (int j=0;j<3;j++) {
             cout << "+";
             for (int k=0;k<ancho;k++) cout << "-";
@@ -85,34 +94,33 @@ public:
 
     
     void MoverFicha(int nivel) {
-
-        cout << "Que ficha mover (0= Sugerencia, -1= Rendirse): ";
+        cout << "Que ficha mover (0= Sugerencia, -1= Rendirse): "; //Pide la ficha a mover
         int ficha;
         if(!(cin >> ficha)){
             cin.clear();
             string tmp; getline(cin,tmp);
-            cout << "Entrada invalida\n";
+            cout << "Entrada invalida\n"; 
             return;
         }
 
-        // REGRESAR AL MENU
+        // Si te rindes usas -1 para salir
         if(ficha == -1) {
             throw -1; 
         }
 
-        // SUGERENCIA
+        // Pistas de movimientos
         if(ficha == 0){
-            if(nivel == 2){
+            if(nivel == 2){ // nivel dificil, sin pistas
                 cout << "Es nivel dificil, no hay sugerencias.\n";
             } else {
                 // usar A* y tu get_movimiento existente
-                auto ruta = solucion(tablero(matriz), tablero(matMeta));
+                auto ruta = solucion(tablero(matriz), tablero(matMeta)); // Obtiene la ruta desde el estado actual hasta la meta
                 if(ruta.size() < 2){
                     cout << "No hay sugerencia (ya en meta o sin solucion)\n";
                 } else {
-                    int respuesta = tablero(matriz).get_movimiento(ruta[1]);
+                    int respuesta = tablero(matriz).get_movimiento(ruta[1]); // Obtiene el siguiente movimiento recomendado
                     if(respuesta > 0)
-                        cout << "Recomiendo mover la ficha: " << respuesta << "\n";
+                        cout << "Recomiendo mover la ficha: " << respuesta << "\n"; // Muestra la sugerencia
                     else
                         cout << "No se pudo determinar la sugerencia.\n";
                 }
@@ -120,20 +128,21 @@ public:
             return;
         }
 
-        // MOVIMIENTO NORMAL
+        // Movimiento normal
         if (ficha < 0 || ficha > 8) {
-            cout << "Ficha invalida\n";
+            cout << "Ficha invalida\n"; 
             return;
         }
 
+        // Buscar la ficha en la matriz
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
-                if(matriz[i][j] == ficha){
+                if(matriz[i][j] == ficha){ // Si encuentra la ficha
                     if ((abs(posCeroX - i) == 1 && posCeroY == j) ||
-                        (abs(posCeroY - j) == 1 && posCeroX == i)) {
+                        (abs(posCeroY - j) == 1 && posCeroX == i)) { // Verifica si es adyacente al 0
 
                         matriz[posCeroX][posCeroY] = ficha;
-                        matriz[i][j] = 0;
+                        matriz[i][j] = 0; // Mueve la ficha
 
                         posCeroX = i;
                         posCeroY = j;
@@ -147,15 +156,15 @@ public:
         }
     }
 
-    bool esMeta() {
+    bool esMeta() { // Verifica si la matriz actual es igual a la meta
         for (int i=0;i<3;i++)
             for (int j=0;j<3;j++)
-                if (matriz[i][j] != matMeta[i][j])
+                if (matriz[i][j] != matMeta[i][j]) //Compara cada uno
                     return false;
         return true;
     }
 
-    void imprimirPatron(int patron[3][3]) {
+    void imprimirPatron(int patron[3][3]) { //Muestra al jugador el patron que debe seguir
         cout << "\nPatron que debes seguir:\n";
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
@@ -167,6 +176,7 @@ public:
         cout << "\n";
     }
 
+    //Llena la matriz meta segun el nivel seleccionado
     void seleccionarNivel(int nivel) {
         int (*patron)[3];
 
@@ -179,15 +189,16 @@ public:
 
         for(int i=0;i<3;i++)
             for(int j=0;j<3;j++)
-                matMeta[i][j] = patron[i][j];
+                matMeta[i][j] = patron[i][j]; // Copia el patron a la matriz meta
 
         imprimirPatron(patron);
     }
-
+    
+    //funcion para encontrar la posicion del 0
     void buscarCero() {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
-                if(matriz[i][j] == 0){
+                if(matriz[i][j] == 0){ // Si encuentra el 0
                     posCeroX = i;
                     posCeroY = j;
                     return;
@@ -196,20 +207,21 @@ public:
         }
     }
 
-    vector<MatrizJugable> movimientosPosibles() {
-        vector<MatrizJugable> movs;
-        int dx[4] = {-1,1,0,0};
+    vector<MatrizJugable> movimientosPosibles() { // Genera todos los movimientos posibles desde la posicion actual
+        vector<MatrizJugable> movs; // Vector para almacenar los movimientos posibles
+        // Direcciones posibles: arriba, abajo, izquierda, derecha
+        int dx[4] = {-1,1,0,0}; 
         int dy[4] = {0,0,-1,1};
 
         for(int k=0; k<4; k++){
             int nx = posCeroX + dx[k];
             int ny = posCeroY + dy[k];
 
-            if(nx >= 0 && nx < 3 && ny >= 0 && ny < 3){
+            if(nx >= 0 && nx < 3 && ny >= 0 && ny < 3){ // Verifica que la nueva posicion este dentro de los limites
                 MatrizJugable copia = *this;
-                swap(copia.matriz[posCeroX][posCeroY], copia.matriz[nx][ny]);
+                swap(copia.matriz[posCeroX][posCeroY], copia.matriz[nx][ny]); // Intercambia el 0 con la ficha adyacente
                 copia.posCeroX = nx;
-                copia.posCeroY = ny;
+                copia.posCeroY = ny; // Actualiza la posicion del 0
                 movs.push_back(copia);
             }
         }
@@ -218,17 +230,16 @@ public:
     }
 
     void generarNivel(int nivel) {
-       
         for(int i=0;i<3;i++)
-            for(int j=0;j<3;j++)
-                matriz[i][j] = matMeta[i][j];
+            for(int j=0;j<3;j++) 
+                matriz[i][j] = matMeta[i][j]; // Inicializa la matriz con la meta
 
         buscarCero();
 
-        int pasos = (nivel == 1 ? 10 : 40);
+        int pasos = (nivel == 1 ? 10 : 40); // Cantidad de movimientos para mezclar segun el nivel
 
         for(int i=0;i<pasos;i++){
-            auto movs = movimientosPosibles();
+            auto movs = movimientosPosibles(); // Obtiene los movimientos posibles
             if(movs.empty()) break;
             int r = rand() % movs.size();
             *this = movs[r];
@@ -236,8 +247,7 @@ public:
 
         buscarCero();
     }
-
-    void imprimirMatrizSimple() {
+    void imprimirMatrizSimple() { //imprime la matriz normal
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++) cout << matriz[i][j] << ' ';
             cout << '\n';
@@ -249,7 +259,7 @@ public:
 
 void jugarManualmente(){
     MatrizJugable juego;
-
+    // Seleccion de nivel
     cout << "Seleccionar Nivel:\n";
     cout << "1. Facil\n";
     cout << "2. Dificil\n";
@@ -261,8 +271,8 @@ void jugarManualmente(){
         return;
     }
 
-    juego.seleccionarNivel(nivel);
-
+    juego.seleccionarNivel(nivel); // Configura la matriz meta segun el nivel
+    //Ingreso de datos del jugador
     cout << "Ingresa tu alias: ";
     string alias, fecha;
     cin >> alias;
@@ -275,6 +285,7 @@ void jugarManualmente(){
 
     juego.imprimirMatriz();
 
+    //bucle principal del juego
     while(true){
         try {
             juego.MoverFicha(nivel);
@@ -286,7 +297,7 @@ void jugarManualmente(){
             }
         }
 
-        puntos++;
+        puntos++; // Incrementa puntos por cada movimiento
         juego.imprimirMatriz();
 
         if(juego.esMeta()){
@@ -296,11 +307,13 @@ void jugarManualmente(){
         }
     }
 
+    // Preguntar si quiere continuar jugando
     cout << "¿Jugar otra vez? (1 = si / 0 = no): ";
     int ans;
     cin >> ans;
 
-    while(ans != 0){
+    //Misma logica de juego en un bucle
+    while(ans != 0){ // Mientras quiera seguir jugando
 
         puntos = 0;
 

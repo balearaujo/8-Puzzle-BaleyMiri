@@ -4,6 +4,8 @@ using namespace std;
 #include "Puntajes.hpp"
 
 int main(){
+    // Menu principal
+    //Opciones
     cout << "Bienvenido al juego del 8!\n";
     cout << "Elija una opcion:\n";
     cout << "1. Jugar manualmente\n";
@@ -11,15 +13,17 @@ int main(){
     cout << "3. Mostrar reporte de jugadores\n";
     cout << "4. Salir\n";
 
+    //leer opcion
     int opcion;
     cin >> opcion;
 
+    //Bucle del menu por opciones
     while(opcion != 4){
-        if(opcion == 1){
+        if(opcion == 1){ // Jugar manualmente
             jugarManualmente();
         } else if(opcion == 2){
             simulacion();
-        } else if(opcion == 3){
+        } else if(opcion == 3){ // Mostrar reporte
             mostrarReporte();
         } else {
             cout << "Opcion invalida, intente de nuevo.\n";
